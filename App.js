@@ -6,7 +6,7 @@ import Profil from './Profil';
 import Connexion from './Connexion';
 import Page_acceuil from './Page_acceuil';
 import Homepages from './Homepages';
-import Header from './components/Header';
+
 
 
 const Stack = createStackNavigator();

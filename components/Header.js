@@ -1,9 +1,10 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Image, TouchableOpacity, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Profil from '../Profil';
 
-const Header = ({ navigation }) => {
+const Header = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.header}>
       {/* Logo de l'application */}
