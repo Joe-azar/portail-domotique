@@ -52,18 +52,20 @@ const styles = StyleSheet.create({
   button1: {
     backgroundColor: '#52a311',
     padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: 20,
+    marginBottom: 20,
   },
   button2: {
     backgroundColor: '#52a311',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    width: 200,
+    textAlign:"center", 
   },
   logo: {
     marginTop:'25%',

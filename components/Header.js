@@ -33,7 +33,6 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 10,
   },
   logo: {
     width: 110,

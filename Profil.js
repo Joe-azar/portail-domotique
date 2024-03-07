@@ -8,7 +8,7 @@ const Profil = ({ navigation }) => {
   return (
     <View style={styles.container}>
     
-    <Header navigation={navigation} style={styles.header} />
+    <Header style={styles.header} />
     <StatusBar />
       <Image source={require('./img/Ellipse71.png')} style={styles.ellipse} />
       <Text style={styles.text_right}>Jan Doe</Text>
@@ -34,9 +34,13 @@ const Profil = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#515151',
+    paddingTop: 20,
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingBottom: 70,
+    flex: 1,
   },
   logo: {
     position: 'absolute',

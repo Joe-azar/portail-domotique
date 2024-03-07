@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet,Image } from 'react-native';
 
 const Connexion = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Content de vous revoir!</Text>
+    <TouchableOpacity 
+      style={styles.button1} 
+      onPress={() => navigation.navigate('Page_acceuil')}
+      >
+        <Text style={styles.buttonText}> ⇦ Retour à la page précedente</Text>
+      </TouchableOpacity>
+      <Text style={styles.title}>Content de vous revoir! 😄</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -18,13 +24,6 @@ const Connexion = ({ navigation }) => {
       <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('Homepages')}>
         <Text style={styles.buttonText}>Me Connecter</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-      style={styles.button1} 
-      onPress={() => navigation.navigate('Page_acceuil')}
-      >
-        <Text style={styles.buttonText}>Retour à la page précedente</Text>
-      </TouchableOpacity>
-     
       
     </View>
   );
@@ -33,11 +32,12 @@ const Connexion = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 20,
     alignItems: 'center',
     backgroundColor: '#515151',
   },
   title: {
+    marginTop:100,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,

@@ -38,6 +38,7 @@ const styles = {
         borderRadius: 15,
         padding: 10,
         marginBottom: 13,
+        height: 210,
     },
     tableTitle: {
         fontSize: 15,
@@ -45,7 +46,7 @@ const styles = {
         marginBottom: 10,
         marginTop: -23,
         marginLeft: 3,
-        backgroundColor: "#2D2D2D",
+        backgroundColor: "#515151",
         width: "auto",
         color: "#FFFFFF",
         alignSelf: 'flex-start',

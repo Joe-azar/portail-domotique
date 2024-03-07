@@ -16,7 +16,7 @@ export default function Homepages({ navigation }) {
   const [modalAddPlate, setModalAddPlate] = useState(false)
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    //<ScrollView style={{ flex: 1 }}>
     <View style={styles.container}>
     
 
@@ -25,8 +25,8 @@ export default function Homepages({ navigation }) {
       </ModalAnimate>
       <ModalAnimate isModalVisible={modalOpenCamera} setModalVisible={setModalOpenCamera}>
   <Image
-    source={require('./img/user_pic.png')} // Update the path to the location of your image file
-    style={styles.imageStyle} // Define a style for your image if needed
+    source={require('./img/user_pic.png')} 
+    style={styles.imageStyle} 
   />
 </ModalAnimate>
 
@@ -44,14 +44,14 @@ export default function Homepages({ navigation }) {
 
       <StatusBar />
       <Header navigation={navigation}/>
-
-      <TouchableOpacity style={styles.button} onPress={() => setModalOpenPortalVisible(true)}>
-        <Text style={styles.buttonText}>Ouvrir mon portail</Text>
+      <View style={styles.buttonsContainer}>
+      <TouchableOpacity style={[styles.button,styles.leftButton]} onPress={() => setModalOpenPortalVisible(true)}>
+        <Text style={[styles.buttonText, styles.rightButton]}>Ouvrir mon portail</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.fixedButton]} onPress={() => setModalOpenCamera(true)} >
       <Text style={styles.buttonText}>Voir devant mon portail</Text>
     </TouchableOpacity>
-
+    </View>
       <LicensePlateList
         onButtonPress={() => setModalAddPlate(true)}
         licensePlates={[
@@ -94,27 +94,39 @@ export default function Homepages({ navigation }) {
       />
       
     </View>
-    </ScrollView>
+    //</ScrollView>
   );
 }
 
 const styles = {
   container: {
     backgroundColor: '#2D2D2D', // Couleur de fond
-    paddingTop: 40,
+    paddingTop: 20,
     paddingRight: 20,
     paddingLeft: 20,
     paddingBottom: 70,
     flex: 1,
   },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around', // Adjust spacing between buttons
+    alignItems: 'center',
+    marginTop: -10,
+  },
   button: {
-    marginTop: 30,
-    width: "75%",
+    marginTop: 20,
+    width: "48%",
     alignSelf: "center",
     backgroundColor: '#52A311',
     borderRadius: 100,
-    paddingVertical: 15,
+    padding: 10,
     alignItems: "center"
+  },
+  leftButton: {
+    marginRight: 10, // Optional: Add margin to separate buttons
+  },
+  rightButton: {
+    marginLeft: 10, // Optional: Add margin to separate buttons
   },
   buttonSubText: {
     marginTop: 8,
@@ -125,7 +137,7 @@ const styles = {
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   buttonGrey: {
@@ -157,8 +169,8 @@ const styles = {
     color: '#FFFFFF',
   },
   imageStyle: {
-    width: 200, // Set the width as per your requirement
-    height: 200, // Set the height as per your requirement
-    resizeMode: 'contain', // or 'cover', 'stretch', etc.
+    width: 200, 
+    height: 200, 
+    resizeMode: 'contain', 
   },
 }
