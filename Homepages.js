@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, ScrollView, Text, View, TextInput,FlatList } from 'react-native';
 import { useState } from 'react';
+import { Image } from 'react-native';
+
 
 import Header from './components/Header';
 import LicensePlateList from './components/LicencePlateList';
@@ -10,6 +12,7 @@ import ModalAnimate from './components/ModalAnimate';
 
 export default function Homepages({ navigation }) {
   const [modalOpenPortalVisible, setModalOpenPortalVisible] = useState(false)
+  const [modalOpenCamera, setModalOpenCamera] = useState(false)
   const [modalAddPlate, setModalAddPlate] = useState(false)
 
   return (
@@ -20,6 +23,13 @@ export default function Homepages({ navigation }) {
       <ModalAnimate isModalVisible={modalOpenPortalVisible} setModalVisible={setModalOpenPortalVisible}>
         <Text style={styles.modalTitle}>Ouverture du portail en cours...</Text>
       </ModalAnimate>
+      <ModalAnimate isModalVisible={modalOpenCamera} setModalVisible={setModalOpenCamera}>
+  <Image
+    source={require('./img/user_pic.png')} // Update the path to the location of your image file
+    style={styles.imageStyle} // Define a style for your image if needed
+  />
+</ModalAnimate>
+
       <ModalAnimate isModalVisible={modalAddPlate} setModalVisible={setModalAddPlate}>
         <Text style={styles.modalTitle}>Ajouter une plaque</Text>
           <TextInput
@@ -38,7 +48,7 @@ export default function Homepages({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={() => setModalOpenPortalVisible(true)}>
         <Text style={styles.buttonText}>Ouvrir mon portail</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.fixedButton]} >
+      <TouchableOpacity style={[styles.button, styles.fixedButton]} onPress={() => setModalOpenCamera(true)} >
       <Text style={styles.buttonText}>Voir devant mon portail</Text>
     </TouchableOpacity>
 
@@ -145,5 +155,10 @@ const styles = {
     borderRadius: 10,
     padding: 10,
     color: '#FFFFFF',
+  },
+  imageStyle: {
+    width: 200, // Set the width as per your requirement
+    height: 200, // Set the height as per your requirement
+    resizeMode: 'contain', // or 'cover', 'stretch', etc.
   },
 }
