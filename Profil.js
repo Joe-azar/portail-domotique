@@ -8,7 +8,7 @@ const Profil = ({ navigation }) => {
   return (
     <View style={styles.container}>
     
-    <Header style={styles.header} />
+    <Header navigation={navigation} style={styles.header} />
     <StatusBar />
       <Image source={require('./img/Ellipse71.png')} style={styles.ellipse} />
       <Text style={styles.text_right}>Jan Doe</Text>
