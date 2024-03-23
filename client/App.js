@@ -7,8 +7,6 @@ import Connexion from './Connexion';
 import Page_acceuil from './Page_acceuil';
 import Homepages from './Homepages';
 
-
-
 const Stack = createStackNavigator();
 
 const App = () => {

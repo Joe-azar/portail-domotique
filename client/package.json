@@ -1,6 +1,7 @@
 {
   "name": "myproject",
   "version": "1.0.0",
+  "proxy": "http://localhost:5000",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -15,6 +16,7 @@
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
     "react-native": "0.72.6",
+    "react-native-ble-manager": "^11.3.2",
     "react-native-modal": "^13.0.1"
   },
   "devDependencies": {
