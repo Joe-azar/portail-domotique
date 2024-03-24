@@ -1,13 +1,17 @@
-import mysql from "mysql2/promise"
+import mysql from "mysql2"
 
 // Create the connection to database
 const pool = mysql.createPool({
-    host: 'so143978-001.eu.clouddb.ovh.net',
-    user: 'Picaro',
-    password: 'Picaro2000',
-    port: 35991,
-    database: 'bddPortail',
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    port: process.env.MYSQL_PORT,
+    database: process.env.MYSQL_DATABASE,
+    connectTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
 })
 
-const result = await pool.query("SELECT * FROM plaques")
-console.log(result)
+
+pool.getConnection(function (err, connection) {
+    if (err) throw err; // not connected!
+    console.log("Connected!")
+});
