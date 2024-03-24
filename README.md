@@ -40,32 +40,6 @@ Toutes la récupération des données à la même structure qui est la suivante:
   }, [])
 ```
 
-- **Fetch les plaques**: `/api/getAllPlates`
-Exemple:
-```js
- fetch("/api/getAllPlates").then(
-      response => response.json()
-    ).then(
-      data => {
-        setPlates(data)
-      }
-    )
-  }, [])
-```
-
-- **Fetch les utilisateurs**: `/api/getAllUsers`
-Exemple:
-```js
- fetch("/api/getAllUsers").then(
-      response => response.json()
-    ).then(
-      data => {
-        setPlates(data)
-      }
-    )
-  }, [])
-```
-
 - **Fetch les plaques d'un utilisateur**: `/api/getPlatesByUser?userid=<userid>`, remplacer `<userid>` par l'identifiant utilisateur de la base de donnée.
 Exemple:
 ```js
