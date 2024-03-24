@@ -1,4 +1,8 @@
 import mysql from "mysql2"
+import dotenv from "dotenv"
+
+// Load les variables d'environnement
+dotenv.config()
 
 // Create the connection to database
 const pool = mysql.createPool({
