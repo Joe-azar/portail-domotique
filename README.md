@@ -40,10 +40,10 @@ Toutes la récupération des données à la même structure qui est la suivante:
   }, [])
 ```
 
-- **Fetch les plaques d'un utilisateur**: `/api/getPlatesByUser?userid=<userid>`, remplacer `<userid>` par l'identifiant utilisateur de la base de donnée.
+- **Fetch les plaques d'un utilisateur**: `/api/getPlatesByUser/<userid>`, remplacer `<userid>` par l'identifiant utilisateur de la base de donnée.
 Exemple:
 ```js
- fetch("/api/getPlatesByUser?userid=1234").then(
+ fetch("/api/getPlatesByUser/1234").then(
       response => response.json()
     ).then(
       data => {
@@ -53,7 +53,7 @@ Exemple:
   }, [])
 ```
 
-- **Fetch un utilisateur**: `/api/getUser?userid=<userid>`
+- **Fetch un utilisateur**: `/api/getUser/<userid>`
 Exemple:
 ```js
  fetch("/api/getUser?userid=1234").then(
