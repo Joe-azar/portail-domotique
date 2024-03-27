@@ -29,30 +29,25 @@ connection.connect(err => {
 // Endpoint d'inscription
 app.post('/api/inscription', (req, res) => {
   const { email, prenom, nom, motDePasse } = req.body;
-
-  // Hashage du mot de passe
+  
   bcrypt.hash(motDePasse, saltRounds, (err, hash) => {
     if (err) {
       console.error('Erreur lors du hashage du mot de passe', err);
-      return res.status(500).send('Erreur serveur');
+      return res.status(500).send('Erreur serveur'); // Make sure to return here
     }
 
-    // Requête pour insérer l'utilisateur, en utilisant le mot de passe hashé
-    connection.query('SELECT * FROM user', (error, results, fields) => {
-      if (error) throw error;
-      // Process your results here
-      console.log(results);
-    });
-    
     connection.query('INSERT INTO user (email, name, last_name, password) VALUES (?, ?, ?, ?)', [email, prenom, nom, hash], (error, results) => {
       if (error) {
         console.error('Erreur lors de l\'inscription', error);
-        return res.status(500).send('Erreur lors de l\'inscription');
+        return res.status(500).send('Erreur lors de l\'inscription'); // Return to stop execution
       }
-      res.send('Inscription réussie');
+
+      // Use res.json to automatically set the content-type to application/json
+      return res.json({ message: 'Inscription réussie' }); // Return to ensure function exits
     });
   });
 });
+
 
 app.listen(port, () => {
   console.log(`Serveur démarré sur http://localhost:${port}`);
