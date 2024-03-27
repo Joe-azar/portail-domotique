@@ -29,20 +29,26 @@ const Inscription = ({ navigation }) => {
       body: JSON.stringify(userData),
     })
     .then(response => {
-      if (response.ok) {
-        console.log(response);
-        return response.json(); // ou response.text() si la réponse est une chaîne
+      console.log(response);
+      const contentType = response.headers.get('content-type');
+      if (response.ok && contentType && contentType.indexOf('application/json') !== -1) {
+        return response.json(); // Parse only if response is OK and content type is JSON
+      } else if (!response.ok) {
+        throw new Error('Réponse du réseau non ok.');
+      } else {
+        throw new Error('La réponse n\'est pas en JSON.');
       }
-      throw new Error('Réponse du réseau non ok.');
     })
+    
     .then(data => {
       Alert.alert('Succès', 'Inscription réussie');
       // Ici, vous pouvez gérer la navigation de l'utilisateur vers un nouvel écran, etc.
     })
     .catch((error) => {
-      console.error('Erreur:', error);
-      Alert.alert('Erreur', 'Problème lors de l\'inscription');
+      console.error('Erreur:', error.message);
+      Alert.alert('Erreur', error.message.startsWith('SyntaxError') ? 'Problème de format de la réponse du serveur.' : 'Problème lors de l\'inscription');
     });
+    
     
     
     // Ici, vous pourriez ajouter votre logique d'envoi de données à votre backend

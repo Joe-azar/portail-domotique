@@ -43,6 +43,7 @@ app.post('/api/inscription', (req, res) => {
       // Process your results here
       console.log(results);
     });
+    
     connection.query('INSERT INTO user (email, name, last_name, password) VALUES (?, ?, ?, ?)', [email, prenom, nom, hash], (error, results) => {
       if (error) {
         console.error('Erreur lors de l\'inscription', error);
