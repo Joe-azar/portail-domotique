@@ -1,7 +1,53 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,Button } from 'react-native';
+import React, {useState}from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,Button, Alert } from 'react-native';
 
 const Inscription = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [nom, setNom] = useState('');
+  const [motDePasse, setMotDePasse] = useState('');
+  const [confirmMotDePasse, setConfirmMotDePasse] = useState('');
+  const inscrireUtilisateur = () => {
+    // Vérification basique des champs
+    if (!email || !prenom || !nom || !motDePasse || !confirmMotDePasse) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+      return;
+    }
+    // Vérification de la correspondance des mots de passe
+    if (motDePasse !== confirmMotDePasse) {
+      Alert.alert('Erreur', 'Les mots de passe ne correspondent pas.');
+      return;
+    }
+    // Si tout est bon, procédez à l'envoi des données
+    console.log('Tout est bon pour l\'envoi des données:', { email, prenom, nom, motDePasse });
+    const userData = { email, prenom, nom, motDePasse };
+    fetch('http://172.20.10.3:3000/api/inscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log(response);
+        return response.json(); // ou response.text() si la réponse est une chaîne
+      }
+      throw new Error('Réponse du réseau non ok.');
+    })
+    .then(data => {
+      Alert.alert('Succès', 'Inscription réussie');
+      // Ici, vous pouvez gérer la navigation de l'utilisateur vers un nouvel écran, etc.
+    })
+    .catch((error) => {
+      console.error('Erreur:', error);
+      Alert.alert('Erreur', 'Problème lors de l\'inscription');
+    });
+    
+    
+    // Ici, vous pourriez ajouter votre logique d'envoi de données à votre backend
+  };
+
   return (
     
     <View style={styles.container}>
@@ -17,31 +63,44 @@ const Inscription = ({ navigation }) => {
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#D7D7D7"
+        onChangeText={setEmail} // Mise à jour de l'état email
+        value={email} // Valeur contrôlée par l'état email
       />
       <TextInput
         style={styles.input}
         placeholder="Prenom"
         placeholderTextColor="#D7D7D7"
+        onChangeText={setPrenom} // Mise à jour de l'état prenom
+        value={prenom} // Valeur contrôlée par l'état prenom
       />
       <TextInput
         style={styles.input}
         placeholder="Nom"
         placeholderTextColor="#D7D7D7"
+        onChangeText={setNom} // Mise à jour de l'état nom
+        value={nom} // Valeur contrôlée par l'état nom
       />
       <TextInput
         style={styles.input}
         placeholder="Mot de passe"
         placeholderTextColor="#D7D7D7"
+        onChangeText={setMotDePasse} // Mise à jour de l'état motDePasse
+        value={motDePasse} // Valeur contrôlée par l'état motDePasse
+        secureTextEntry // Masquer le mot de passe
       />
       <TextInput
         style={styles.input}
         placeholder="Confirmer votre mot de passe"
         placeholderTextColor="#D7D7D7"
+        onChangeText={setConfirmMotDePasse} // Mise à jour de l'état confirmMotDePasse
+        value={confirmMotDePasse} // Valeur contrôlée par l'état confirmMotDePasse
+        secureTextEntry // Masquer la confirmation du mot de passe
       />
 
-<TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Inscriptions</Text>
+      <TouchableOpacity style={styles.button} onPress={inscrireUtilisateur}>
+         <Text style={styles.buttonText}>Inscription</Text>
       </TouchableOpacity>
+
       
     </View>
   );

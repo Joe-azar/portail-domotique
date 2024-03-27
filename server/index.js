@@ -1,30 +1,58 @@
 require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-// Create a connection object with your database configuration
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+// Créez une connexion à la base de données
 const connection = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
 });
 
-// Connect to the database
-connection.connect((err) => {
+connection.connect(err => {
   if (err) {
-    console.error('Error connecting: ' + err.stack);
+    console.error('Erreur de connexion à la base de données: ' + err.stack);
     return;
   }
-
-  console.log('Connected as id ' + connection.threadId);
+  console.log('Connecté à la base de données avec l\'id ' + connection.threadId);
 });
 
-connection.query('SELECT * FROM user', (error, results, fields) => {
-  if (error) throw error;
-  // Process your results here
-  console.log(results);
+// Endpoint d'inscription
+app.post('/api/inscription', (req, res) => {
+  const { email, prenom, nom, motDePasse } = req.body;
+
+  // Hashage du mot de passe
+  bcrypt.hash(motDePasse, saltRounds, (err, hash) => {
+    if (err) {
+      console.error('Erreur lors du hashage du mot de passe', err);
+      return res.status(500).send('Erreur serveur');
+    }
+
+    // Requête pour insérer l'utilisateur, en utilisant le mot de passe hashé
+    connection.query('SELECT * FROM user', (error, results, fields) => {
+      if (error) throw error;
+      // Process your results here
+      console.log(results);
+    });
+    connection.query('INSERT INTO user (email, name, last_name, password) VALUES (?, ?, ?, ?)', [email, prenom, nom, hash], (error, results) => {
+      if (error) {
+        console.error('Erreur lors de l\'inscription', error);
+        return res.status(500).send('Erreur lors de l\'inscription');
+      }
+      res.send('Inscription réussie');
+    });
+  });
 });
 
-// Don't forget to close the connection when done
-connection.end();
-
+app.listen(port, () => {
+  console.log(`Serveur démarré sur http://localhost:${port}`);
+});
