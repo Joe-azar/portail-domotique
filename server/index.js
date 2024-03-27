@@ -49,6 +49,68 @@ app.post('/api/inscription', (req, res) => {
 });
 
 
+// Endpoint de connexion
+app.post('/api/connexion', (req, res) => {
+  console.log(req.body);
+  const { email, motDePasse } = req.body;
+
+  // Vérifiez si l'email existe dans la base de données
+  connection.query('SELECT * FROM user WHERE email = ?', [email], (error, users) => {
+    if (error) {
+      console.error('Erreur lors de la recherche de l\'utilisateur', error);
+      return res.status(500).send('Erreur lors de la recherche de l\'utilisateur');
+    }
+
+    if (users.length === 0) {
+      // Aucun utilisateur trouvé avec cet email
+      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+    }
+
+    // Utilisateur trouvé, comparons maintenant le mot de passe
+    const user = users[0];
+    console.log("Mot de passe fourni:", motDePasse);
+console.log("Hash du mot de passe dans la base:", user.password);
+    bcrypt.compare(motDePasse, user.password, (err, isMatch) => {
+      if (err) {
+        console.error('Erreur lors de la vérification du mot de passe', err);
+        return res.status(500).send('Erreur serveur');
+      }
+    
+      console.log("Le mot de passe correspond:", isMatch);
+    
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      }
+
+      
+      // Authentification réussie
+      return res.json({ success: true, message: 'Connexion réussie' });
+
+    });
+  });
+});
+
+// Endpoint d'afficher plate
+app.get('/api/licensePlates', (req, res) => {
+  const userId = req.query.userId; // Récupère l'userId depuis les paramètres de requête
+  if (!userId) {
+    return res.status(400).send('userId est requis');
+  }
+  connection.query('SELECT * FROM plate WHERE userId = ?', [userId], (error, results) => {
+    if (error) {
+      console.error('Erreur lors de la récupération des plaques', error);
+      return res.status(500).send('Erreur serveur');
+    }
+
+    res.json({ licensePlates: results });
+  });
+});
+
+
+
+
+
+
 app.listen(port, () => {
   console.log(`Serveur démarré sur http://localhost:${port}`);
 });

@@ -41,7 +41,12 @@ const Inscription = ({ navigation }) => {
     })
     
     .then(data => {
-      Alert.alert('Succès', 'Inscription réussie');
+      Alert.alert('Succès', 'Inscription réussie',[
+        {
+          text: "OK",
+          onPress: () => navigation.navigate('Page_acceuil')
+        }
+      ]);
       // Ici, vous pouvez gérer la navigation de l'utilisateur vers un nouvel écran, etc.
     })
     .catch((error) => {
@@ -103,7 +108,8 @@ const Inscription = ({ navigation }) => {
         secureTextEntry // Masquer la confirmation du mot de passe
       />
 
-      <TouchableOpacity style={styles.button} onPress={inscrireUtilisateur}>
+      <TouchableOpacity style={styles.button} onPress={inscrireUtilisateur} >
+      
          <Text style={styles.buttonText}>Inscription</Text>
       </TouchableOpacity>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 const LicensePlateList = ({ licensePlates, onButtonPress }) => {
+    console.log(licensePlates);
     return (
         <View style={styles.container}>
             {/* Tableau avec bords arrondis */}
@@ -14,7 +15,7 @@ const LicensePlateList = ({ licensePlates, onButtonPress }) => {
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.plateItem}>
-                            <Text style={styles.plateText}>{item.plateNumber}</Text>
+                            <Text style={styles.plateText}>{item.number}</Text>
                         </View>
                     )}
                 />

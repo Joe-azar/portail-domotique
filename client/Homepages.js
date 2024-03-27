@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, ScrollView, Text, View, TextInput,FlatList } from 'react-native';
 import { useState } from 'react';
 import { Image } from 'react-native';
+import { useEffect } from 'react';
 
 
 import Header from './components/Header';
@@ -14,6 +15,21 @@ export default function Homepages({ navigation }) {
   const [modalOpenPortalVisible, setModalOpenPortalVisible] = useState(false)
   const [modalOpenCamera, setModalOpenCamera] = useState(false)
   const [modalAddPlate, setModalAddPlate] = useState(false)
+  const [licensePlates, setLicensePlates] = useState([]);
+  const loadLicensePlates = () => {
+    fetch('http://172.20.10.3:3000/api/licensePlates')
+      .then(response => response.json())
+      .then(data => {
+        setLicensePlates(data.licensePlates);
+      })
+      .catch((error) => {
+        console.error('Erreur:', error);
+      });
+  };
+  useEffect(() => {
+    loadLicensePlates();
+  }, []);
+
 
   return (
     //<ScrollView style={{ flex: 1 }}>
@@ -53,24 +69,9 @@ export default function Homepages({ navigation }) {
     </TouchableOpacity>
     </View>
       <LicensePlateList
-        onButtonPress={() => setModalAddPlate(true)}
-        licensePlates={[
-          { id: 1, plateNumber: 'ABC123' },
-          { id: 2, plateNumber: 'DEF456' },
-          { id: 3, plateNumber: 'GH789' },
-          { id: 4, plateNumber: 'ABC123' },
-          { id: 5, plateNumber: 'DEF456' },
-          { id: 6, plateNumber: 'GH789' },
-          { id: 7, plateNumber: 'ABC123' },
-          { id: 8, plateNumber: 'DEF456' },
-          { id: 9, plateNumber: 'GH789' },
-          { id: 10, plateNumber: 'ABC123' },
-          { id: 12, plateNumber: 'DEF456' },
-          { id: 13, plateNumber: 'GH789' },
-          { id: 14, plateNumber: 'ABC123' },
-          { id: 15, plateNumber: 'DEF456' },
-          { id: 16, plateNumber: 'GH789' },
-        ]}
+        
+          onButtonPress={() => setModalAddPlate(true)}
+          licensePlates={licensePlates}
       />
 
       <LastEntryList
