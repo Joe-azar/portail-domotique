@@ -103,15 +103,26 @@ app.get('/api/licensePlates/:userid', (req, res) => {
      res.json({ licensePlates: results });
   });
 });
-// Génération et envoi du token lors de la connexion
-// app.post('/api/login', (req, res) => {
-//   // Vérifiez les identifiants de l'utilisateur ici...
-//   const userId = /* récupérer l'userId de l'utilisateur */;
-//   const token = jwt.sign({ userId }, 'votreSecretJWT', { expiresIn: '24h' });
-//   res.json({ token });
-// });
+// Endpoint pour ajouter une plaque d'immatriculation
+app.post('/api/addLicensePlate', (req, res) => {
+  const { userid, licensePlate } = req.body;
 
+  if (!userid || !licensePlate) {
+    return res.status(400).send('Les données userid et licensePlate sont requises.');
+  }
 
+  // Vérification simplifiée pour cet exemple, assurez-vous de valider et de nettoyer les entrées dans une application réelle
+  const query = 'INSERT INTO plate (userid, number) VALUES (?, ?)';
+
+  connection.query(query, [userid, licensePlate], (error, results) => {
+    if (error) {
+      console.error('Erreur lors de l\'ajout de la plaque d\'immatriculation:', error);
+      return res.status(500).send('Erreur lors de l\'ajout de la plaque d\'immatriculation');
+    }
+
+    return res.json({ message: 'Plaque d\'immatriculation ajoutée avec succès' });
+  });
+});
 
 
 

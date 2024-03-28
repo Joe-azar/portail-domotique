@@ -16,8 +16,32 @@ export default function Homepages({ navigation, route }) {
   const [modalOpenCamera, setModalOpenCamera] = useState(false)
   const [modalAddPlate, setModalAddPlate] = useState(false)
   const [licensePlates, setLicensePlates] = useState([]);
-  
+  const [newPlate, setNewPlate] = useState('');
   const userid = route.params.userid;
+  const ajouterPlaque = () => {
+    // Ici, vous pouvez ajouter une validation de la nouvelle plaque si nécessaire
+    fetch('http://172.20.10.3:3000/api/addLicensePlate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userid: userid, // Assurez-vous que cette variable contient l'ID de l'utilisateur
+        licensePlate: newPlate,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Plaque ajoutée:', data);
+      // Ici, vous pouvez fermer le modal et rafraîchir la liste des plaques ou gérer les erreurs
+      setModalAddPlate(false);
+      loadLicensePlates(); // Rechargez les plaques pour afficher la nouvelle
+    })
+    .catch((error) => {
+      console.error('Erreur lors de l\'ajout de la plaque:', error);
+    });
+  };
+  
   const loadLicensePlates = () => {
     fetch(`http://172.20.10.3:3000/api/licensePlates/${userid}`)
       .then(response => response.json())
@@ -52,12 +76,14 @@ export default function Homepages({ navigation, route }) {
 
       <ModalAnimate isModalVisible={modalAddPlate} setModalVisible={setModalAddPlate}>
         <Text style={styles.modalTitle}>Ajouter une plaque</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="XX - 123 - XX"
-            placeholderTextColor="#757575"
-          />
-        <TouchableOpacity style={styles.buttonGrey}>
+        <TextInput
+          style={styles.input}
+          placeholder="XX - 123 - XX"
+          placeholderTextColor="#757575"
+          onChangeText={setNewPlate} // Mettre à jour l'état avec la valeur saisie
+          value={newPlate}
+        />
+        <TouchableOpacity style={styles.buttonGrey} onPress={ajouterPlaque}>
           <Text style={styles.buttonTextGrey}>Ajouter la plaque</Text>
         </TouchableOpacity>
       </ModalAnimate>
