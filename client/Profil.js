@@ -2,17 +2,28 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, } from 'react-native';
 import Header from './components/Header';
 import { StatusBar } from 'expo-status-bar';
-const Profil = ({ navigation }) => {
+import { useState, useEffect } from 'react';
+const Profil = ({ route , navigation}) => {
+  const [user, setUser] = useState({ nom: '', prenom: '', email: '' });
+  const userid = route.params.userid;
+  useEffect(() => {
+    fetch(`http://172.20.10.3:3000/api/user/${userid}`)
+      .then(response => response.json())
+      .then(data => {
+        setUser({ nom: data.nom, prenom: data.prenom, email: data.email });
+      })
+      .catch(error => console.error('Erreur:', error));
+  }, [userid]); // Dépendance à userId pour recharger si l'ID change
     
 
   return (
     <View style={styles.container}>
     
-    <Header style={styles.header} />
+    <Header style={styles.header} navigation={navigation} userid={userid}/>
     <StatusBar />
       <Image source={require('./img/Ellipse71.png')} style={styles.ellipse} />
-      <Text style={styles.text_right}>Jan Doe</Text>
-      <Text style={styles.text_right1}>adresse@mail.com 
+      <Text style={styles.text_right}>{`${user.prenom} ${user.nom}`}</Text>
+      <Text style={styles.text_right1}>{user.email} 
       <TouchableOpacity>
         <Text style={styles.buttonChange}>Changer</Text>
       </TouchableOpacity>
@@ -66,14 +77,14 @@ const styles = StyleSheet.create({
   ellipse: {
     position: 'relative',
     top: "5%",
-    right: "20%",
+    right: "30%",
     width: "50%",
     height: "20%",
   },
   text_right: {
     position: 'relative',
-    bottom:"10%",
-    left: "30%",
+    bottom:"15%",
+    left: "15%",
     width: "50%",
     height: "20%",
     fontSize: 24,
@@ -83,8 +94,8 @@ const styles = StyleSheet.create({
   text_right1: {
     position: 'relative',
     bottom:"25%",
-    left: "30%",
-    width: "50%",
+    left: "20%",
+    width: "60%",
     height: "20%",
     fontSize: 18,
     color: '#FFFFFF',

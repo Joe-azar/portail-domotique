@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Image, TouchableOpacity, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const Header = () => {
+const Header = ({userid }) => {
   const navigation = useNavigation();
   return (
     <View style={styles.header}>
@@ -21,8 +21,8 @@ const Header = () => {
       </TouchableOpacity>
 
       {/* Photo de profil de l'utilisateur */}
-      <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Profil')}>
-        <Image source={require('../img/user_pic.png')} style={styles.userImage} />
+      <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Profil', { userid: userid })}>
+        <Image source={require('../img/Ellipse71.png')} style={styles.userImage} />
       </TouchableOpacity>
     </View>
   );

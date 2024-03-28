@@ -113,6 +113,7 @@ app.get('/api/licensePlates/:userid', (req, res) => {
      res.json({ licensePlates: results });
   });
 });
+
 // Endpoint pour ajouter une plaque d'immatriculation
 app.post('/api/addLicensePlate', (req, res) => {
   const { userid, licensePlate } = req.body;
@@ -121,18 +122,34 @@ app.post('/api/addLicensePlate', (req, res) => {
     return res.status(400).send('Les données userid et licensePlate sont requises.');
   }
 
-  // Vérification simplifiée pour cet exemple, assurez-vous de valider et de nettoyer les entrées dans une application réelle
-  const query = 'INSERT INTO plate (userid, number) VALUES (?, ?)';
+  // Vérifiez d'abord si la plaque existe déjà pour cet utilisateur
+  const checkQuery = 'SELECT * FROM plate WHERE userid = ? AND number = ?';
 
-  connection.query(query, [userid, licensePlate], (error, results) => {
+  connection.query(checkQuery, [userid, licensePlate], (error, results) => {
     if (error) {
-      console.error('Erreur lors de l\'ajout de la plaque d\'immatriculation:', error);
-      return res.status(500).send('Erreur lors de l\'ajout de la plaque d\'immatriculation');
+      console.error('Erreur lors de la vérification de la plaque:', error);
+      return res.status(500).send('Erreur serveur lors de la vérification.');
     }
 
-    return res.json({ message: 'Plaque d\'immatriculation ajoutée avec succès' });
+    if (results.length > 0) {
+      // La plaque existe déjà, donc on envoie un message d'erreur
+      return res.status(409).send('Cette plaque existe déjà.');
+    } else {
+      // La plaque n'existe pas, on peut procéder à l'ajout
+      const insertQuery = 'INSERT INTO plate (userid, number) VALUES (?, ?)';
+      
+      connection.query(insertQuery, [userid, licensePlate], (insertError) => {
+        if (insertError) {
+          console.error('Erreur lors de l\'ajout de la plaque:', insertError);
+          return res.status(500).send('Erreur serveur lors de l\'ajout de la plaque.');
+        }
+
+        return res.json({ message: 'Plaque d\'immatriculation ajoutée avec succès.' });
+      });
+    }
   });
 });
+
 // Endpoint pour supprimer une plaque d'immatriculation
 app.delete('/api/deleteLicensePlate/:plateId', (req, res) => {
   const { plateId } = req.params;
@@ -158,6 +175,27 @@ app.delete('/api/deleteLicensePlate/:plateId', (req, res) => {
     return res.json({ message: 'Plaque d\'immatriculation supprimée avec succès' });
   });
 });
+
+app.get('/api/user/:userid', (req, res) => {
+  const { userid } = req.params;
+
+  const query = 'SELECT email, name, last_name FROM user WHERE id = ?';
+
+  connection.query(query, [userid], (error, results) => {
+    if (error) {
+      console.error('Erreur lors de la récupération des données utilisateur:', error);
+      return res.status(500).send('Erreur interne du serveur');
+    }
+
+    if (results.length > 0) {
+      const user = results[0];
+      return res.json({ email: user.email, prenom: user.name, nom: user.last_name });
+    } else {
+      return res.status(404).send('Utilisateur non trouvé');
+    }
+  });
+});
+
 
 
 

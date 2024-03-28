@@ -3,6 +3,7 @@ import { TouchableOpacity, ScrollView, Text, View, TextInput,FlatList } from 're
 import { useState } from 'react';
 import { Image } from 'react-native';
 import { useEffect } from 'react';
+import { WebView } from 'react-native-webview';
 
 
 import Header from './components/Header';
@@ -49,10 +50,15 @@ export default function Homepages({ navigation, route }) {
     })
     .then(response => response.json())
     .then(data => {
+      if(data.exists) {
+        // La plaque existe déjà, gérer selon le besoin (par exemple, afficher un message)
+        alert('Cette plaque est déjà enregistrée.');
+      } else {
       console.log('Plaque ajoutée:', data);
       // Ici, vous pouvez fermer le modal et rafraîchir la liste des plaques ou gérer les erreurs
       setModalAddPlate(false);
       loadLicensePlates(); // Rechargez les plaques pour afficher la nouvelle
+      }
     })
     .catch((error) => {
       console.error('Erreur lors de l\'ajout de la plaque:', error);
@@ -88,6 +94,9 @@ export default function Homepages({ navigation, route }) {
   <Image
     source={require('./img/user_pic.png')} 
     style={styles.imageStyle} 
+    // style={styles.cameraStyle}
+    // source={{ uri: 'URL_DE_VOTRE_FLUX_VIDEO' }}
+    // scalesPageToFit={true}
   />
 </ModalAnimate>
 
@@ -106,7 +115,7 @@ export default function Homepages({ navigation, route }) {
       </ModalAnimate>
 
       <StatusBar />
-      <Header navigation={navigation}/>
+      <Header navigation={navigation} userid={userid}/>
       <View style={styles.buttonsContainer}>
       <TouchableOpacity style={[styles.button,styles.leftButton]} onPress={() => setModalOpenPortalVisible(true)}>
         <Text style={[styles.buttonText, styles.rightButton]}>Ouvrir mon portail</Text>
