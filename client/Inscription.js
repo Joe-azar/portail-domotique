@@ -29,7 +29,10 @@ const Inscription = ({ navigation }) => {
       body: JSON.stringify(userData),
     })
     .then(response => {
-      
+      if (response.status === 409) {
+        // Email existe déjà
+        throw new Error('Ce compte existe déjà');
+      }
       const contentType = response.headers.get('content-type');
       if (response.ok && contentType && contentType.indexOf('application/json') !== -1) {
         return response.json(); // Parse only if response is OK and content type is JSON

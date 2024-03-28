@@ -29,7 +29,16 @@ connection.connect(err => {
 // Endpoint d'inscription
 app.post('/api/inscription', (req, res) => {
   const { email, prenom, nom, motDePasse } = req.body;
-  
+  connection.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {
+    if (err) {
+      console.error('Erreur lors de la vérification de l\'email', err);
+      return res.status(500).send('Erreur serveur');
+    }
+
+    if (results.length > 0) {
+      // Un utilisateur avec cet email existe déjà
+      return res.status(409).send('Ce compte existe déjà');
+    }
   bcrypt.hash(motDePasse, saltRounds, (err, hash) => {
     if (err) {
       console.error('Erreur lors du hashage du mot de passe', err);
@@ -46,6 +55,7 @@ app.post('/api/inscription', (req, res) => {
       return res.json({ message: 'Inscription réussie' }); // Return to ensure function exits
     });
   });
+});
 });
 
 
