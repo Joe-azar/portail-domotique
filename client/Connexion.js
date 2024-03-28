@@ -7,7 +7,7 @@ const Connexion = ({ navigation }) => {
   
 
   const verifierUtilisateur = () => {
-    fetch('http://172.20.10.3:3000/api/connexion', {
+    fetch('http://172.20.10.3:3000/api/connexion/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,9 +17,11 @@ const Connexion = ({ navigation }) => {
     .then(response => response.json())
     .then(data => {
       if (data.message === 'Connexion réussie') {
+        console.log('Connexion réussie, userid:', data.userid);
+        //const userid = data.userid;
         // Stocker le token reçu après la connexion
         //AsyncStorage.setItem('userToken', token);
-        navigation.navigate('Homepages');
+        navigation.navigate('Homepages',{ userid: data.userid });
       } else {
         Alert.alert('Erreur', data.message || 'Un problème est survenu.');
       }

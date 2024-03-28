@@ -69,7 +69,7 @@ app.post('/api/connexion', (req, res) => {
     // Utilisateur trouvé, comparons maintenant le mot de passe
     const user = users[0];
     console.log("Mot de passe fourni:", motDePasse);
-console.log("Hash du mot de passe dans la base:", user.password);
+    console.log("Hash du mot de passe dans la base:", user.password);
     bcrypt.compare(motDePasse, user.password, (err, isMatch) => {
       if (err) {
         console.error('Erreur lors de la vérification du mot de passe', err);
@@ -84,15 +84,17 @@ console.log("Hash du mot de passe dans la base:", user.password);
 
       
       // Authentification réussie
-      return res.json({ success: true, message: 'Connexion réussie' });
+      return res.json({ success: true, message: 'Connexion réussie', userid: user.id });
 
     });
   });
 });
 
 // Endpoint d'afficher plate
-app.get('/api/licensePlates', (req, res) => {
-  connection.query('SELECT * FROM plate', (error, results) => {
+app.get('/api/licensePlates/:userid', (req, res) => {
+  const { userid } = req.params;
+  console.log(userid);
+  connection.query('SELECT * FROM plate  WHERE userid = ?', [userid], (error, results) => {
     if (error) {
       console.error('Erreur lors de la récupération des plaques', error);
       return res.status(500).send('Erreur serveur');

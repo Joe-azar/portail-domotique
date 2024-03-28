@@ -11,13 +11,15 @@ import LastEntryList from './components/LastEntryList';
 import ModalAnimate from './components/ModalAnimate';
 
 
-export default function Homepages({ navigation }) {
+export default function Homepages({ navigation, route }) {
   const [modalOpenPortalVisible, setModalOpenPortalVisible] = useState(false)
   const [modalOpenCamera, setModalOpenCamera] = useState(false)
   const [modalAddPlate, setModalAddPlate] = useState(false)
   const [licensePlates, setLicensePlates] = useState([]);
+  
+  const userid = route.params.userid;
   const loadLicensePlates = () => {
-    fetch('http://172.20.10.3:3000/api/licensePlates')
+    fetch(`http://172.20.10.3:3000/api/licensePlates/${userid}`)
       .then(response => response.json())
       .then(data => {
         setLicensePlates(data.licensePlates);
@@ -27,8 +29,10 @@ export default function Homepages({ navigation }) {
       });
   };
   useEffect(() => {
-    loadLicensePlates();
-  }, []);
+    if (userid) {
+      loadLicensePlates(userid);
+    }
+  }, [userid]);
 
 
   return (
