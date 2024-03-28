@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
-const LicensePlateList = ({ licensePlates, onButtonPress }) => {
+const LicensePlateList = ({ licensePlates, onButtonPress, supprimerPlaque  }) => {
     console.log(licensePlates);
     return (
         <View style={styles.container}>
@@ -16,6 +16,9 @@ const LicensePlateList = ({ licensePlates, onButtonPress }) => {
                     renderItem={({ item }) => (
                         <View style={styles.plateItem}>
                             <Text style={styles.plateText}>{item.number}</Text>
+                            <TouchableOpacity onPress={() => supprimerPlaque(item.id)}>
+                                <Text style={{ color: 'red' }}>Supprimer</Text>
+                            </TouchableOpacity>
                         </View>
                     )}
                 />

@@ -123,6 +123,32 @@ app.post('/api/addLicensePlate', (req, res) => {
     return res.json({ message: 'Plaque d\'immatriculation ajoutée avec succès' });
   });
 });
+// Endpoint pour supprimer une plaque d'immatriculation
+app.delete('/api/deleteLicensePlate/:plateId', (req, res) => {
+  const { plateId } = req.params;
+
+  // Assurez-vous que plateId est fourni
+  if (!plateId) {
+    return res.status(400).send('L\'ID de la plaque est requis.');
+  }
+
+  const query = 'DELETE FROM plate WHERE id = ?';
+
+  connection.query(query, [plateId], (error, results) => {
+    if (error) {
+      console.error('Erreur lors de la suppression de la plaque d\'immatriculation:', error);
+      return res.status(500).send('Erreur lors de la suppression de la plaque d\'immatriculation');
+    }
+
+    if (results.affectedRows === 0) {
+      // Aucune ligne affectée signifie que la plaque n'a pas été trouvée
+      return res.status(404).send('Plaque d\'immatriculation non trouvée.');
+    }
+
+    return res.json({ message: 'Plaque d\'immatriculation supprimée avec succès' });
+  });
+});
+
 
 
 

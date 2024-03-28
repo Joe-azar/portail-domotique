@@ -18,6 +18,23 @@ export default function Homepages({ navigation, route }) {
   const [licensePlates, setLicensePlates] = useState([]);
   const [newPlate, setNewPlate] = useState('');
   const userid = route.params.userid;
+  const supprimerPlaque = (plateId) => {
+    fetch(`http://172.20.10.3:3000/api/deleteLicensePlate/${plateId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Plaque supprimée:', data);
+      loadLicensePlates(); // Rechargez les plaques pour mettre à jour la liste
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la suppression de la plaque:', error);
+    });
+  };
+  
   const ajouterPlaque = () => {
     // Ici, vous pouvez ajouter une validation de la nouvelle plaque si nécessaire
     fetch('http://172.20.10.3:3000/api/addLicensePlate', {
@@ -102,6 +119,7 @@ export default function Homepages({ navigation, route }) {
         
           onButtonPress={() => setModalAddPlate(true)}
           licensePlates={licensePlates}
+          supprimerPlaque={supprimerPlaque}
       />
 
       <LastEntryList
