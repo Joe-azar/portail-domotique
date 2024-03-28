@@ -17,7 +17,8 @@ const Connexion = ({ navigation }) => {
     .then(response => response.json())
     .then(data => {
       if (data.message === 'Connexion réussie') {
-        
+        // Stocker le token reçu après la connexion
+        //AsyncStorage.setItem('userToken', token);
         navigation.navigate('Homepages');
       } else {
         Alert.alert('Erreur', data.message || 'Un problème est survenu.');

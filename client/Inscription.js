@@ -55,8 +55,7 @@ const Inscription = ({ navigation }) => {
     });
     
     
-    
-    // Ici, vous pourriez ajouter votre logique d'envoi de données à votre backend
+
   };
 
   return (

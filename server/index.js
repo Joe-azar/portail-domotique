@@ -92,19 +92,22 @@ console.log("Hash du mot de passe dans la base:", user.password);
 
 // Endpoint d'afficher plate
 app.get('/api/licensePlates', (req, res) => {
-  const userId = req.query.userId; // Récupère l'userId depuis les paramètres de requête
-  if (!userId) {
-    return res.status(400).send('userId est requis');
-  }
-  connection.query('SELECT * FROM plate WHERE userId = ?', [userId], (error, results) => {
+  connection.query('SELECT * FROM plate', (error, results) => {
     if (error) {
       console.error('Erreur lors de la récupération des plaques', error);
       return res.status(500).send('Erreur serveur');
     }
 
-    res.json({ licensePlates: results });
+     res.json({ licensePlates: results });
   });
 });
+// Génération et envoi du token lors de la connexion
+// app.post('/api/login', (req, res) => {
+//   // Vérifiez les identifiants de l'utilisateur ici...
+//   const userId = /* récupérer l'userId de l'utilisateur */;
+//   const token = jwt.sign({ userId }, 'votreSecretJWT', { expiresIn: '24h' });
+//   res.json({ token });
+// });
 
 
 
