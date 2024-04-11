@@ -13,8 +13,11 @@
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "expo-image-picker": "~14.7.1",
     "express": "^4.19.1",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.2"
+    "mysql2": "^3.9.2",
+    "react-native-image-picker": "^7.1.2",
+    "react-native-video": "^5.2.1"
   }
 }

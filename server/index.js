@@ -9,6 +9,15 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+// Set MIME type for HLS streams
+app.use((req, res, next) => {
+  if (req.path.endsWith('.m3u8')) {
+    res.type('application/x-mpegURL');
+  } else if (req.path.endsWith('.ts')) {
+    res.type('video/MP2T');
+  }
+  next();
+});
 
 // Créez une connexion à la base de données
 const connection = mysql.createConnection({
@@ -195,10 +204,24 @@ app.get('/api/user/:userid', (req, res) => {
     }
   });
 });
+// Endpoint to get camera stream URL
+app.get('/api/cameraStreamUrl', (req, res) => {
+  const streamUrl = `http://172.20.10.3:8080/stream`;
+  res.json({ url: streamUrl });
+});
 
+app.post('/api/uploadImage', (req, res) => {
+  const { userid, image } = req.body;
+  const query = 'INSERT INTO user_images (userid, image) VALUES (?, ?)';
 
-
-
+  connection.query(query, [userid, image], (error) => {
+    if (error) {
+      console.error('Error uploading image:', error);
+      return res.status(500).send('Error uploading image');
+    }
+    res.json({ message: 'Image uploaded successfully' });
+  });
+});
 
 
 app.listen(port, () => {

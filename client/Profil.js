@@ -3,9 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, } from 'rea
 import Header from './components/Header';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 const Profil = ({ route , navigation}) => {
   const [user, setUser] = useState({ nom: '', prenom: '', email: '' });
   const userid = route.params.userid;
+  
   useEffect(() => {
     fetch(`http://172.20.10.3:3000/api/user/${userid}`)
       .then(response => response.json())
@@ -14,7 +16,55 @@ const Profil = ({ route , navigation}) => {
       })
       .catch(error => console.error('Erreur:', error));
   }, [userid]); // Dépendance à userId pour recharger si l'ID change
-    
+  const openCamera = async () => {
+    // Request the permission to access the camera
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert('Permission Required', 'You need to grant camera access to use this feature');
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchCameraAsync({
+      allowsEditing: true, // Optional: Allows editing the image before returning
+      aspect: [4, 3], // Aspect ratio to maintain if allowsEditing is true
+      quality: 1, // Quality of the captured image
+      base64: true, // Return the image in Base64
+    });
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    // Assuming you have a function to handle the upload
+    const base64Image = `data:image/jpeg;base64,${pickerResult.base64}`;
+    uploadImage(base64Image);
+  };
+
+  // Example function to demonstrate image upload logic
+  const uploadImage = async (base64Image) => {
+    const url = 'http://172.20.10.3:3000/api/uploadImage';
+    const body = JSON.stringify({
+      userid: userid, // Ensure this is the correct userid for the logged-in user
+      image: base64Image,
+    });
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body,
+      });
+  
+      const jsonResponse = await response.json();
+      console.log(jsonResponse.message); // Log the success message
+      // Handle further logic here, such as showing a success alert or updating UI
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      // Handle error, such as showing an error message to the user
+    }
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -34,8 +84,8 @@ const Profil = ({ route , navigation}) => {
         <Text style={styles.buttonModifier}>Modifier ma photo</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Changer mon mot de passe</Text>
+      <TouchableOpacity style={styles.button} onPress={openCamera}>
+        <Text style={styles.buttonText}>Ajouter une photo</Text>
       </TouchableOpacity>
     </View>
     
