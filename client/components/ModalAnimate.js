@@ -5,8 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 const ModalAnimate = ({ isModalVisible, setModalVisible, children }) => {
     const toggleModal = () => {
+        console.log("Toggling modal visibility");
         setModalVisible(!isModalVisible);
     };
+    
 
     return (
         <View>
@@ -14,7 +16,7 @@ const ModalAnimate = ({ isModalVisible, setModalVisible, children }) => {
                 isVisible={isModalVisible}
                 animationIn="slideInUp"
                 animationOut="slideOutDown"
-                onBackdropPress={() => { }}
+                onBackdropPress={toggleModal}
                 backdropOpacity={0.5}
             >
                 <View style={styles.modalContainer}>
@@ -35,6 +37,7 @@ const ModalAnimate = ({ isModalVisible, setModalVisible, children }) => {
 
 const styles = {
     modalContainer: {
+        height:600,
         padding: 20,
         backgroundColor: "#2D2D2D",
         borderRadius: 15,

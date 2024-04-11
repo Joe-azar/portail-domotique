@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity, ScrollView, Text, View, TextInput,FlatList } from 'react-native';
+import { TouchableOpacity, Text, View, TextInput,FlatList } from 'react-native';
 import { useState } from 'react';
 import { Image } from 'react-native';
 import { useEffect } from 'react';
 import { WebView } from 'react-native-webview';
-
+import Video from 'expo-av';
 
 import Header from './components/Header';
 import LicensePlateList from './components/LicencePlateList';
@@ -18,7 +18,9 @@ export default function Homepages({ navigation, route }) {
   const [modalAddPlate, setModalAddPlate] = useState(false)
   const [licensePlates, setLicensePlates] = useState([]);
   const [newPlate, setNewPlate] = useState('');
+  const [streamUrl, setStreamUrl] = useState(''); // Initialize streamUrl state
   const userid = route.params.userid;
+  
   const supprimerPlaque = (plateId) => {
     fetch(`http://172.20.10.3:3000/api/deleteLicensePlate/${plateId}`, {
       method: 'DELETE',
@@ -81,24 +83,42 @@ export default function Homepages({ navigation, route }) {
     }
   }, [userid]);
 
+  useEffect(() => {
+    fetch('http://172.20.10.3:3000/api/cameraStreamUrl')
+        .then((response) => response.json())
+        .then((data) => {
+            setStreamUrl(data.url);
+        })
+        .catch((error) => {
+            console.error('Failed to load stream URL:', error);
+        });
+}, []);
+const MyVideoPlayer = () => (
+  <Video source={{uri: "http://172.20.10.3:3000/api/cameraStreamUrl"}}   // The video stream URL
+         ref={(ref) => {
+           this.player = ref
+         }}                                     
+         onBuffer={this.onBuffer}                
+         onError={this.videoError}               
+         style={styles.backgroundVideo} />
+);
+  
+
 
   return (
-    //<ScrollView style={{ flex: 1 }}>
     <View style={styles.container}>
-    
-
       <ModalAnimate isModalVisible={modalOpenPortalVisible} setModalVisible={setModalOpenPortalVisible}>
         <Text style={styles.modalTitle}>Ouverture du portail en cours...</Text>
       </ModalAnimate>
       <ModalAnimate isModalVisible={modalOpenCamera} setModalVisible={setModalOpenCamera}>
-  <Image
-    source={require('./img/user_pic.png')} 
-    style={styles.imageStyle} 
-    // style={styles.cameraStyle}
-    // source={{ uri: 'URL_DE_VOTRE_FLUX_VIDEO' }}
-    // scalesPageToFit={true}
-  />
-</ModalAnimate>
+      <Text style={styles.modalTitle}>Vue de la caméra</Text>
+      <WebView
+        style={{ flex: 1 }}
+        javaScriptEnabled={true}
+        source={{ uri: streamUrl }} // Update with your actual URL
+      />
+      </ModalAnimate>
+
 
       <ModalAnimate isModalVisible={modalAddPlate} setModalVisible={setModalAddPlate}>
         <Text style={styles.modalTitle}>Ajouter une plaque</Text>
@@ -120,9 +140,9 @@ export default function Homepages({ navigation, route }) {
       <TouchableOpacity style={[styles.button,styles.leftButton]} onPress={() => setModalOpenPortalVisible(true)}>
         <Text style={[styles.buttonText, styles.rightButton]}>Ouvrir mon portail</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.fixedButton]} onPress={() => setModalOpenCamera(true)} >
-      <Text style={styles.buttonText}>Voir devant mon portail</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setModalOpenCamera(true)}>
+                <Text style={styles.buttonText}>Voir devant mon portail</Text>
+      </TouchableOpacity>
     </View>
       <LicensePlateList
         
@@ -152,7 +172,6 @@ export default function Homepages({ navigation, route }) {
       />
       
     </View>
-    //</ScrollView>
   );
 }
 
