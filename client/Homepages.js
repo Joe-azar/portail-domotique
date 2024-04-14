@@ -82,6 +82,35 @@ export default function Homepages({ navigation, route }) {
       loadLicensePlates(userid);
     }
   }, [userid]);
+    ///////////////////////////////////////////////////////////////
+    const ouvrirPortail = () => {
+      // newState est la nouvelle valeur pour l'attribut "state", par exemple 1
+      fetch('http://172.20.10.3:3000/api/changeState', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userid: userid ,
+          // la nouvelle valeur de "state" que vous souhaitez définir
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.success) {
+          console.log(data);
+          // Ici, vous pouvez par exemple rafraîchir les données affichées à l'utilisateur
+        } else {
+          console.error('Erreur lors du changement de l\'état:', data.message);
+          // Gérer l'erreur, par exemple en affichant un message à l'utilisateur
+        }
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la requête:', error);
+      });
+    };
+  
+    //////////////////////////////////////////////////////////////
 
   useEffect(() => {
     fetch('http://172.20.10.3:3000/api/cameraStreamUrl')
@@ -137,7 +166,7 @@ const MyVideoPlayer = () => (
       <StatusBar />
       <Header navigation={navigation} userid={userid}/>
       <View style={styles.buttonsContainer}>
-      <TouchableOpacity style={[styles.button,styles.leftButton]} onPress={() => setModalOpenPortalVisible(true)}>
+      <TouchableOpacity style={[styles.button,styles.leftButton]} onPress={() => {ouvrirPortail();setModalOpenPortalVisible(true); }}>
         <Text style={[styles.buttonText, styles.rightButton]}>Ouvrir mon portail</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => setModalOpenCamera(true)}>

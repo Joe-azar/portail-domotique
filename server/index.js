@@ -59,10 +59,16 @@ app.post('/api/inscription', (req, res) => {
         console.error('Erreur lors de l\'inscription', error);
         return res.status(500).send('Erreur lors de l\'inscription'); // Return to stop execution
       }
+      const userId = results.insertId; // Obtenez l'ID de l'utilisateur inséré
+        connection.query('INSERT INTO gatestate (userid, state) VALUES (?, ?)', [userId, 0], (errorGateState) => {
+          if (errorGateState) {
+            console.error('Erreur lors de l\'ajout dans gatestate', errorGateState);
+          }
 
       // Use res.json to automatically set the content-type to application/json
       return res.json({ message: 'Inscription réussie' }); // Return to ensure function exits
     });
+  });
   });
 });
 });
@@ -222,6 +228,31 @@ app.post('/api/uploadImage', (req, res) => {
     res.json({ message: 'Image uploaded successfully' });
   });
 });
+
+//////////////////////////////////////////////////
+app.post('/api/changeState', (req, res) => {
+  const { userid } = req.body;
+
+  if (userid == null ) {
+    return res.status(400).json({ error: 'Les paramètres "userid" et "state" sont requis.' });
+  }
+
+  // La requête SQL pour mettre à jour l'état
+  const sql = 'UPDATE gatestate SET state = 1 WHERE userid = ?';
+
+  // Exécuter la requête SQL
+  connection.query(sql, [userid], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la mise à jour de la base de données', err);
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+    }
+    res.json({ success: true, message: 'L\'état a été mis à jour avec succès.' });
+  });
+});
+/////////////////////////////////////////////////
 
 
 app.listen(port, () => {
