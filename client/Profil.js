@@ -4,6 +4,8 @@ import Header from './components/Header';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
+
 const Profil = ({ route , navigation}) => {
   const [user, setUser] = useState({ nom: '', prenom: '', email: '' });
   const userid = route.params.userid;
@@ -12,7 +14,8 @@ const Profil = ({ route , navigation}) => {
     fetch(`http://172.20.10.3:3000/api/user/${userid}`)
       .then(response => response.json())
       .then(data => {
-        setUser({ nom: data.nom, prenom: data.prenom, email: data.email });
+        
+        setUser({ nom: data.nom, prenom: data.prenom, email: data.email, image: data.image ? `data:image/jpg;base64,${data.image}` : './img/Ellipse71.png' });
       })
       .catch(error => console.error('Erreur:', error));
   }, [userid]); // Dépendance à userId pour recharger si l'ID change
@@ -35,9 +38,11 @@ const Profil = ({ route , navigation}) => {
     if (pickerResult.cancelled === true) {
       return;
     }
-
     // Assuming you have a function to handle the upload
-    const base64Image = `data:image/jpeg;base64,${pickerResult.base64}`;
+    const base64Image = `data:image/jpg;base64,${pickerResult.base64}`;
+    console.log('Base64 Image Data:', base64Image);
+    console.log('Base64 raw data:', pickerResult.base64);
+    //console.log('Picker Result:', pickerResult);
     uploadImage(base64Image);
   };
 
@@ -45,25 +50,30 @@ const Profil = ({ route , navigation}) => {
   const uploadImage = async (base64Image) => {
     const url = 'http://172.20.10.3:3000/api/uploadImage';
     const body = JSON.stringify({
-      userid: userid, // Ensure this is the correct userid for the logged-in user
-      image: base64Image,
+        userid: userid, // Make sure 'userid' is correctly defined in your component
+        image: base64Image,
     });
-  
+
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: body,
-      });
-  
-      const jsonResponse = await response.json();
-      console.log(jsonResponse.message); // Log the success message
-      // Handle further logic here, such as showing a success alert or updating UI
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body,
+        });
+
+        const jsonResponse = await response.json();
+        if (response.ok) {
+            console.log(jsonResponse.message); // Log the success message
+            Alert.alert('Upload Successful', jsonResponse.message);
+        } else {
+            throw new Error(jsonResponse.message || 'Failed to upload image');
+        }
     } catch (error) {
-      console.error('Error uploading image:', error);
-      // Handle error, such as showing an error message to the user
+        console.error('Error uploading image:', error);
+        Alert.alert('Upload Error', error.toString());
     }
-  };
+};
+
   
 
   return (
@@ -71,7 +81,7 @@ const Profil = ({ route , navigation}) => {
     
     <Header style={styles.header} navigation={navigation} userid={userid}/>
     <StatusBar />
-      <Image source={require('./img/Ellipse71.png')} style={styles.ellipse} />
+    <Image source={require('./img/Ellipse71.png')} style={styles.ellipse} />
       <Text style={styles.text_right}>{`${user.prenom} ${user.nom}`}</Text>
       <Text style={styles.text_right1}>{user.email} 
       <TouchableOpacity>

@@ -63,6 +63,7 @@ app.post('/api/inscription', (req, res) => {
         connection.query('INSERT INTO gatestate (userid, state) VALUES (?, ?)', [userId, 0], (errorGateState) => {
           if (errorGateState) {
             console.error('Erreur lors de l\'ajout dans gatestate', errorGateState);
+
           }
 
       // Use res.json to automatically set the content-type to application/json
@@ -190,46 +191,7 @@ app.delete('/api/deleteLicensePlate/:plateId', (req, res) => {
     return res.json({ message: 'Plaque d\'immatriculation supprimée avec succès' });
   });
 });
-
-app.get('/api/user/:userid', (req, res) => {
-  const { userid } = req.params;
-
-  const query = 'SELECT email, name, last_name FROM user WHERE id = ?';
-
-  connection.query(query, [userid], (error, results) => {
-    if (error) {
-      console.error('Erreur lors de la récupération des données utilisateur:', error);
-      return res.status(500).send('Erreur interne du serveur');
-    }
-
-    if (results.length > 0) {
-      const user = results[0];
-      return res.json({ email: user.email, prenom: user.name, nom: user.last_name });
-    } else {
-      return res.status(404).send('Utilisateur non trouvé');
-    }
-  });
-});
-// Endpoint to get camera stream URL
-app.get('/api/cameraStreamUrl', (req, res) => {
-  const streamUrl = `http://172.20.10.3:8080/stream`;
-  res.json({ url: streamUrl });
-});
-
-app.post('/api/uploadImage', (req, res) => {
-  const { userid, image } = req.body;
-  const query = 'INSERT INTO user_images (userid, image) VALUES (?, ?)';
-
-  connection.query(query, [userid, image], (error) => {
-    if (error) {
-      console.error('Error uploading image:', error);
-      return res.status(500).send('Error uploading image');
-    }
-    res.json({ message: 'Image uploaded successfully' });
-  });
-});
-
-//////////////////////////////////////////////////
+////////////////////////////////////////
 app.post('/api/changeState', (req, res) => {
   const { userid } = req.body;
 
@@ -252,7 +214,62 @@ app.post('/api/changeState', (req, res) => {
     res.json({ success: true, message: 'L\'état a été mis à jour avec succès.' });
   });
 });
-/////////////////////////////////////////////////
+////////////////////////////////////////
+app.get('/api/user/:userid', (req, res) => {
+  const { userid } = req.params;
+
+  // This is the query to get the user's basic details.
+  const userDataQuery = 'SELECT email, name, last_name FROM user WHERE id = ?';
+
+  // Start by querying the user's basic details.
+  connection.query(userDataQuery, [userid], (error, userResults) => {
+    if (error) {
+      console.error('Error retrieving user data:', error);
+      return res.status(500).send('Internal server error');
+    }
+
+    // Check if the user was found.
+    if (userResults.length > 0) {
+      const user = userResults[0];
+
+      // Now query for the user's image data.
+      const userImageQuery = 'SELECT image FROM user_images WHERE userid = ?';
+      connection.query(userImageQuery, [userid], (imgError, imgResults) => {
+        if (imgError) {
+          console.error('Error retrieving user image:', imgError);
+          return res.status(500).send('Internal server error');
+        }
+
+        // Include the image data in the response if available.
+        user.image = imgResults.length > 0 ? `data:image/jpeg;base64,${imgResults[0].image}` : null;
+        
+        // Return the combined user data and image.
+        return res.json({ email: user.email, prenom: user.name, nom: user.last_name, image: user.image });
+      });
+    } else {
+      return res.status(404).send('User not found');
+    }
+  });
+});
+
+// Endpoint to get camera stream URL
+app.get('/api/cameraStreamUrl', (req, res) => {
+  const streamUrl = `http://172.20.10.3:8080/stream`;
+  res.json({ url: streamUrl });
+});
+
+app.post('/api/uploadImage', (req, res) => {
+  const { userid, image } = req.body;
+  const query = 'INSERT INTO user_images (userid, image) VALUES (?, ?)';
+
+  connection.query(query, [userid, image], (error) => {
+    if (error) {
+      console.error('Error uploading image:', error);
+      return res.status(500).send('Error uploading image');
+    }
+    res.json({ message: 'Image uploaded successfully' });
+  });
+});
 
 
 app.listen(port, () => {

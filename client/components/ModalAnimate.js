@@ -37,7 +37,7 @@ const ModalAnimate = ({ isModalVisible, setModalVisible, children }) => {
 
 const styles = {
     modalContainer: {
-        height:600,
+
         padding: 20,
         backgroundColor: "#2D2D2D",
         borderRadius: 15,
